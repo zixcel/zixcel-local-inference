@@ -60,7 +60,7 @@ dependencies = [
 name = "crowsi-transport-foundation"
 version = "0.10.0"
 source = "sparse+https://ecosystem-private.invalid/cargo/index/"
-checksum = "460e2f0ed4731dd3dc34c1654228c4fbf39c79bc92726620c173d8cd4767ae87"
+checksum = "a6042d4453b144f554aa2498b673b0630e95f5c760ceaa197839028631b4f363"
 dependencies = [
  "rustix",
 ]
@@ -504,7 +504,7 @@ checksum = "e13c156562582aa81c60cb29407084cdb54c4164760106ab78e6c5b0858cf64e"
 name = "zixcel-inference-cost"
 version = "0.10.0"
 source = "sparse+https://zixcel-private.invalid/cargo/index/"
-checksum = "77f0a403724fa92e81fac3e7de218f9bbc020ab74b823bd4d0ca0044714bc105"
+checksum = "437e7900053bba470cd1e40ae20d0dfcece596eda326048076e41267c9b25981"
 dependencies = [
  "serde",
  "serde_json",
@@ -532,7 +532,7 @@ dependencies = [
 name = "zixcel-revision"
 version = "0.10.0"
 source = "sparse+https://zixcel-private.invalid/cargo/index/"
-checksum = "f38adf85cc811fd9e77f2e6f21afb83877374c49d3a7218cb29acd4bb2e40ae6"
+checksum = "712845cc67b0861d14d4cfb8014c843a8ba9f2da4a4e19a2e015b182be723e84"
 dependencies = [
  "redb",
  "serde",
