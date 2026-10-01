@@ -1,0 +1,47 @@
+[package]
+exclude = ["*.tgz", "**/*.tgz", "/registration/**", "/state/**", "/.local/**", "/.state/**", "/.data/**", "/secrets/**", "/credentials/**", "/.env", "/.env.production", "/.env.local", "/*.tgz", "/*.tar.gz", "/*.tar", "/*.zip", "/*.whl", "/*.crate", "/.ruff_cache/**", "/.mypy_cache/**", "/.tox/**", "/.nox/**", "/.hypothesis/**", "/.coverage", "/.coverage.*", "/htmlcov/**", "/lcov.info", "/junit.xml", "/*.profraw", "/*.profdata", "/*.egg-info/**", "/target/**", "/node_modules/**", "/dist/**", "/build/**", "/.cache/**", "/.pytest_cache/**", "/coverage/**"]
+name = "zixcel-local-inference"
+version = "0.10.0"
+edition = "2024"
+rust-version = "1.97"
+description = "Local model catalog, acquisition contract, and verified artifact placement for Zixcel"
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/zixcel/zixcel-local-inference"
+homepage = "https://github.com/zixcel/zixcel-local-inference"
+documentation = "https://docs.rs/zixcel-local-inference"
+publish = ["zixcel-private"]
+
+[package.metadata.zixcel]
+boundary = "local-inference-artifact-lifecycle"
+external_actions = true
+network_transport_owner = "crowsi"
+
+[workspace]
+members = ["."]
+resolver = "3"
+
+[dependencies]
+zixcel-inference-cost = { version = "=0.10.0", registry = "zixcel-private" }
+base64 = "0.22.1"
+ed25519-dalek = { version = "2.2.0", features = ["rand_core"] }
+http = "1.4.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.150"
+sha2 = "0.10.9"
+zixcel-revision = { version = "=0.10.0", registry = "zixcel-private", features = ["redb"] }
+crowsi-transport-foundation = { version = "=0.10.0", registry = "ecosystem-private", features = ["process"] }
+
+[dev-dependencies]
+rand_core = { version = "0.6.4", features = ["getrandom"] }
+tempfile = "3.27.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "deny"
+pedantic = "deny"
+dbg_macro = "deny"
+todo = "deny"
+unwrap_used = "deny"

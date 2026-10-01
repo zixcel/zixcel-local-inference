@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/installation/v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "sourceId", "catalogId", "catalogSequence", "modelId", "displayName",
+    "releaseId", "artifactId", "artifactKind", "format", "artifactPath", "artifactSha256",
+    "artifactBytes", "runtimeEngines", "state", "inferenceReady"
+  ],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/installation/v2" },
+    "sourceId": { "type": "string" },
+    "catalogId": { "type": "string" },
+    "catalogSequence": { "type": "integer", "minimum": 1 },
+    "modelId": { "type": "string" },
+    "displayName": { "type": "string" },
+    "releaseId": { "type": "string" },
+    "artifactId": { "type": "string" },
+    "artifactKind": { "type": "string" },
+    "format": { "type": "string" },
+    "artifactPath": { "type": "string", "minLength": 1 },
+    "artifactSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "artifactBytes": { "type": "integer", "minimum": 1 },
+    "runtimeEngines": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "state": { "const": "artifact-ready" },
+    "inferenceReady": { "const": false }
+  }
+}

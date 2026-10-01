@@ -1,0 +1,636 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://model/runtime/admission/command/v1",
+  "title": "Exact runtime admission command",
+  "description": "Owner 0.10.0 bounded explicit admission/preparation; JSON <= 16384 bytes. No model inference.",
+  "oneOf": [
+    {
+      "type":"object", "additionalProperties":false,
+      "required":["operation","command"],
+      "properties":{"operation":{"const":"process"},"command":{"$ref":"runtime-process-command-v1.schema.json"}}
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference"
+      ],
+      "properties": {
+        "operation": {
+          "const": "verifyRuntime"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation"
+      ],
+      "properties": {
+        "operation": {
+          "const": "provision"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation"
+      ],
+      "properties": {
+        "operation": {
+          "const": "recover"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation"
+      ],
+      "properties": {
+        "operation": {
+          "const": "inspect"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference"
+      ],
+      "properties": {
+        "operation": {
+          "const": "describeRuntime"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference"
+      ],
+      "properties": {
+        "operation": {
+          "const": "describeArtifact"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference"
+      ],
+      "properties": {
+        "operation": {
+          "const": "verifyArtifact"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "source",
+        "definition",
+        "expectedRevision"
+      ],
+      "properties": {
+        "operation": {
+          "const": "admitArtifact"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "definition": {
+          "$ref": "#/$defs/artifact"
+        },
+        "expectedRevision": {
+          "$ref": "#/$defs/revision"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "definition",
+        "expectedRevision"
+      ],
+      "properties": {
+        "operation": {
+          "const": "admitRuntime"
+        },
+        "definition": {
+          "$ref": "#/$defs/runtime"
+        },
+        "expectedRevision": {
+          "$ref": "#/$defs/revision"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference"
+      ],
+      "properties": {
+        "operation": {
+          "const": "verifyDistribution"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "definition",
+        "expectedRevision"
+      ],
+      "properties": {
+        "operation": {
+          "const": "admitDistribution"
+        },
+        "definition": {
+          "$ref": "#/$defs/distribution"
+        },
+        "expectedRevision": {
+          "$ref": "#/$defs/revision"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "reference",
+        "rule"
+      ],
+      "properties": {
+        "operation": {
+          "const": "prepareCpuDistribution"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "rule": {
+          "const": "llama-9d817213a-x64-baseline-1"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "preparation",
+        "expectedRevision"
+      ],
+      "properties": {
+        "operation": {
+          "const": "admitCpuDistribution"
+        },
+        "preparation": {
+          "$ref": "#/$defs/cpuPreparation"
+        },
+        "expectedRevision": {
+          "$ref": "#/$defs/revision"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "commit"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "commit": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publisher",
+        "license",
+        "source",
+        "revision"
+      ],
+      "properties": {
+        "publisher": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2048
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sha256",
+        "bytes",
+        "format",
+        "provenance"
+      ],
+      "properties": {
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8589934592
+        },
+        "format": {
+          "enum": [
+            "ggufV3",
+            "staticElf64",
+            "dynamicElf64"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      }
+    },
+    "modelConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contextTokens",
+        "batchTokens"
+      ],
+      "properties": {
+        "contextTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 131072
+        },
+        "batchTokens": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4096
+        }
+      }
+    },
+    "runtimeConfiguration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "threads",
+        "memoryBytes"
+      ],
+      "properties": {
+        "threads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256
+        },
+        "memoryBytes": {
+          "type": "integer",
+          "minimum": 16777216,
+          "maximum": 68719476736
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "modelArtifactRef",
+        "implementationRef",
+        "modelConfiguration",
+        "runtimeConfiguration",
+        "engine",
+        "engineRevision",
+        "modelArchitecture"
+      ],
+      "properties": {
+        "modelArtifactRef": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "implementationRef": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "modelConfiguration": {
+          "$ref": "#/$defs/modelConfiguration"
+        },
+        "runtimeConfiguration": {
+          "$ref": "#/$defs/runtimeConfiguration"
+        },
+        "engine": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "engineRevision": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        },
+        "modelArchitecture": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executable",
+        "files",
+        "aliases",
+        "modules",
+        "host"
+      ],
+      "properties": {
+        "executable": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9._+-]+$"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "artifactRef"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9._+-]+$"
+              },
+              "artifactRef": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "maxItems": 48,
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "target"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9._+-]+$"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9._+-]+$"
+              }
+            }
+          },
+          "maxItems": 48,
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9._+-]+$"
+          },
+          "maxItems": 32,
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "host": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "os",
+            "architecture",
+            "interpreter",
+            "libraries",
+            "symbolVersions"
+          ],
+          "properties": {
+            "os": {
+              "const": "linux"
+            },
+            "architecture": {
+              "enum": [
+                "x86_64",
+                "aarch64"
+              ]
+            },
+            "interpreter": {
+              "enum": [
+                "/lib64/ld-linux-x86-64.so.2",
+                "/lib/ld-linux-aarch64.so.1"
+              ]
+            },
+            "libraries": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9._+-]+$"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "symbolVersions": {
+              "type": "object",
+              "maxProperties": 16,
+              "propertyNames": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9._+-]+$"
+              },
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9._+-]+$"
+                },
+                "maxItems": 256,
+                "minItems": 1,
+                "uniqueItems": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "cpuPreparation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition",
+        "provenance"
+      ],
+      "properties": {
+        "definition": {
+          "$ref": "#/$defs/distribution"
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "derivedFrom",
+            "selectionPurpose",
+            "selectedBackend",
+            "selectionEvidence",
+            "derivationRuleRevision",
+            "distributionRef"
+          ],
+          "properties": {
+            "derivedFrom": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "selectionPurpose": {
+              "const": "cpu-execution"
+            },
+            "selectedBackend": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "selectionEvidence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "os",
+                "architecture",
+                "requiredFeatures",
+                "availableFeatures"
+              ],
+              "properties": {
+                "os": {
+                  "const": "linux"
+                },
+                "architecture": {
+                  "const": "x86_64"
+                },
+                "requiredFeatures": {
+                  "type": "array",
+                  "items": {
+                    "const": "sse2"
+                  },
+                  "minItems": 1,
+                  "maxItems": 1
+                },
+                "availableFeatures": {
+                  "type": "array",
+                  "items": {
+                    "const": "sse2"
+                  },
+                  "minItems": 1,
+                  "maxItems": 1
+                }
+              }
+            },
+            "derivationRuleRevision": {
+              "const": "llama-9d817213a-x64-baseline-1"
+            },
+            "distributionRef": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

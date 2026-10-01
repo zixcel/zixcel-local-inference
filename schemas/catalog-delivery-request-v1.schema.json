@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/catalog-delivery-request/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "sourceId", "method", "url", "transportOwner", "maximumResponseBytes", "state"],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/catalog-delivery-request/v1" },
+    "sourceId": { "type": "string" },
+    "method": { "const": "GET" },
+    "url": { "type": "string", "pattern": "^https?://" },
+    "transportOwner": { "const": "crowsi" },
+    "maximumResponseBytes": { "type": "integer", "minimum": 1, "maximum": 8388608 },
+    "state": { "const": "awaiting-crowsi-delivery" }
+  }
+}

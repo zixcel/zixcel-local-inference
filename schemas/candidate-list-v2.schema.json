@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/candidate-list/v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "candidates", "containsExecutableCode"],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/candidate-list/v2" },
+    "containsExecutableCode": { "const": false },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sourceId", "catalogId", "catalogSequence", "id", "displayName", "publisher",
+          "licenseSpdx", "parameterCountMillions", "estimatedQ4Bytes", "languages",
+          "capabilities", "recommendationRank", "releaseState"
+        ],
+        "properties": {
+          "sourceId": { "type": "string" },
+          "catalogId": { "type": "string" },
+          "catalogSequence": { "type": "integer", "minimum": 1 },
+          "id": { "type": "string" },
+          "displayName": { "type": "string" },
+          "publisher": { "type": "string" },
+          "licenseSpdx": { "type": "string" },
+          "parameterCountMillions": { "type": "integer", "minimum": 0 },
+          "estimatedQ4Bytes": { "type": "integer", "minimum": 0 },
+          "languages": { "type": "array", "items": { "type": "string" } },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "recommendationRank": { "type": "integer", "minimum": 0 },
+          "releaseState": { "enum": ["installable", "review-required"] }
+        }
+      }
+    }
+  }
+}

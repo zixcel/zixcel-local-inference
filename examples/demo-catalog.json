@@ -1,0 +1,48 @@
+{
+  "schema": "zixcel://local-inference/catalog/v2",
+  "catalogId": "local-lifecycle-demo",
+  "sequence": 1,
+  "models": [
+    {
+      "id": "demo-local-model",
+      "displayName": "Lifecycle Demo Model",
+      "publisher": "zixcel-example-only",
+      "licenseSpdx": "CC0-1.0",
+      "parameterCountMillions": 0,
+      "estimatedQ4Bytes": 24,
+      "languages": ["none"],
+      "capabilities": ["lifecycle-verification"],
+      "recommendationRank": 1,
+      "releases": [
+        {
+          "id": "demo-1",
+          "recommended": true,
+          "artifacts": [
+            {
+              "id": "demo-gguf",
+              "filename": "demo-model.gguf",
+              "kind": "lifecycle-demo-not-model-weights",
+              "format": "gguf",
+              "quantization": null,
+              "priority": 1,
+              "runtimeEngines": ["demo-runtime"],
+              "source": {
+                "repository": "zixcel-local-inference/examples",
+                "revision": "demo-1",
+                "url": "https://example.invalid/zixcel/demo-model.gguf"
+              },
+              "integrity": {
+                "sha256": "495bc675b94c2748fb9a2a2b07ae51e9b2b0622bfc08b4104938cb58ffa4c2b1",
+                "bytes": 24
+              },
+              "approval": {
+                "state": "approved",
+                "evidence": ["example-only-not-for-inference"]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

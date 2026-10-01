@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/acquisition-plan/v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema", "sourceId", "catalogId", "catalogSequence", "modelId", "releaseId",
+    "artifactId", "artifactKind", "format", "quantization", "runtimeEngines",
+    "sourceRepository", "sourceRevision", "sourceUrl", "expectedSha256", "expectedBytes",
+    "transportOwner", "automaticExecution", "state", "destination"
+  ],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/acquisition-plan/v2" },
+    "sourceId": { "type": "string" },
+    "catalogId": { "type": "string" },
+    "catalogSequence": { "type": "integer", "minimum": 1 },
+    "modelId": { "type": "string" },
+    "releaseId": { "type": "string" },
+    "artifactId": { "type": "string" },
+    "artifactKind": { "type": "string" },
+    "format": { "type": "string" },
+    "quantization": { "type": ["string", "null"] },
+    "runtimeEngines": { "type": "array", "items": { "type": "string" } },
+    "sourceRepository": { "type": "string" },
+    "sourceRevision": { "type": "string" },
+    "sourceUrl": { "type": "string", "pattern": "^https?://" },
+    "expectedSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "expectedBytes": { "type": "integer", "minimum": 1 },
+    "transportOwner": { "const": "crowsi" },
+    "automaticExecution": { "const": false },
+    "state": { "const": "awaiting-crowsi-delivery" },
+    "destination": { "type": "string", "minLength": 1 }
+  }
+}

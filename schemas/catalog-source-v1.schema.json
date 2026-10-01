@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/catalog-source/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "priority", "kind", "location", "keyId", "publicKeyBase64"],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/catalog-source/v1" },
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "priority": { "type": "integer", "minimum": 0, "maximum": 65535 },
+    "kind": { "enum": ["file", "remote"] },
+    "location": { "type": "string", "minLength": 1 },
+    "keyId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "publicKeyBase64": { "type": "string", "minLength": 1 }
+  }
+}

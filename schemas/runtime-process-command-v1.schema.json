@@ -1,0 +1,13 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"zixcel://model/runtime/process/command/v1",
+  "description":"Explicit external runtime owner, not semantic inference. References are exact lowercase SHA-256 identities; requestRef is caller-issued 256-bit request identity. No PID/endpoint restoration.",
+  "$defs":{"reference":{"type":"string","pattern":"^[0-9a-f]{64}$"}},
+  "oneOf":[
+    {"type":"object","additionalProperties":false,"required":["operation"],"properties":{"operation":{"const":"inspect"}}},
+    {"type":"object","additionalProperties":false,"required":["operation"],"properties":{"operation":{"const":"shutdown"}}},
+    {"type":"object","additionalProperties":false,"required":["operation","runtimeRef","requestRef"],"properties":{"operation":{"const":"start"},"runtimeRef":{"$ref":"#/$defs/reference"},"requestRef":{"$ref":"#/$defs/reference"}}},
+    {"type":"object","additionalProperties":false,"required":["operation","processRef"],"properties":{"operation":{"const":"stop"},"processRef":{"$ref":"#/$defs/reference"}}},
+    {"type":"object","additionalProperties":false,"required":["operation","runtimeRef","requestRef","processRef"],"properties":{"operation":{"const":"restart"},"runtimeRef":{"$ref":"#/$defs/reference"},"requestRef":{"$ref":"#/$defs/reference"},"processRef":{"$ref":"#/$defs/reference"}}}
+  ]
+}

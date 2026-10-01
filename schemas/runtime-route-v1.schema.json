@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/runtime-route/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "id", "engine", "protocol", "endpoint", "capabilities", "enabled"],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/runtime-route/v1" },
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "engine": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" },
+    "protocol": { "enum": ["openai-compatible", "zixcel-inference-v1"] },
+    "endpoint": { "type": "string", "pattern": "^https?://" },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$" }
+    },
+    "enabled": { "const": true }
+  }
+}

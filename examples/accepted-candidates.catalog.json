@@ -1,0 +1,89 @@
+{
+  "schema": "zixcel://local-inference/catalog/v2",
+  "catalogId": "accepted-lightweight-candidates",
+  "sequence": 2,
+  "models": [
+    {
+      "id": "qwen3-0.6b",
+      "displayName": "Qwen3-0.6B",
+      "publisher": "Qwen",
+      "licenseSpdx": "Apache-2.0",
+      "parameterCountMillions": 600,
+      "estimatedQ4Bytes": 400000000,
+      "languages": ["ja", "en", "multilingual"],
+      "capabilities": ["routing", "tool-selection", "structured-output"],
+      "recommendationRank": 1,
+      "releases": [
+        {
+          "id": "1eaf4d9657fe65ad10a51eab76a8db5b363bddaa",
+          "recommended": true,
+          "artifacts": [
+            {
+              "id": "q8-0-gguf",
+              "filename": "Qwen3-0.6B-Q8_0.gguf",
+              "kind": "model-weights",
+              "format": "gguf",
+              "quantization": "q8_0",
+              "priority": 1,
+              "runtimeEngines": ["llama.cpp"],
+              "source": {
+                "repository": "Qwen/Qwen3-0.6B-GGUF",
+                "revision": "1eaf4d9657fe65ad10a51eab76a8db5b363bddaa",
+                "url": "https://huggingface.co/Qwen/Qwen3-0.6B-GGUF/resolve/1eaf4d9657fe65ad10a51eab76a8db5b363bddaa/Qwen3-0.6B-Q8_0.gguf"
+              },
+              "integrity": {
+                "sha256": "9465e63a22add5354d9bb4b99e90117043c7124007664907259bd16d043bb031",
+                "bytes": 639446688
+              },
+              "approval": {
+                "state": "approved",
+                "evidence": [
+                  "apache-2.0-license-reviewed",
+                  "publisher-revision-recorded",
+                  "artifact-size-and-sha256-recorded",
+                  "llama.cpp-gguf-compatibility-reviewed"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "qwen3.5-0.8b",
+      "displayName": "Qwen3.5-0.8B",
+      "publisher": "Qwen",
+      "licenseSpdx": "Apache-2.0",
+      "parameterCountMillions": 800,
+      "estimatedQ4Bytes": 500000000,
+      "languages": ["ja", "en", "multilingual"],
+      "capabilities": ["routing", "structured-output"],
+      "recommendationRank": 2,
+      "releases": []
+    },
+    {
+      "id": "sarashina2.2-0.5b-instruct",
+      "displayName": "Sarashina2.2-0.5B-Instruct",
+      "publisher": "SB Intuitions",
+      "licenseSpdx": "MIT",
+      "parameterCountMillions": 800,
+      "estimatedQ4Bytes": 500000000,
+      "languages": ["ja"],
+      "capabilities": ["semantic-normalization", "intent-interpretation"],
+      "recommendationRank": 3,
+      "releases": []
+    },
+    {
+      "id": "smollm2-360m-instruct",
+      "displayName": "SmolLM2-360M-Instruct",
+      "publisher": "Hugging Face",
+      "licenseSpdx": "Apache-2.0",
+      "parameterCountMillions": 360,
+      "estimatedQ4Bytes": 200000000,
+      "languages": ["en"],
+      "capabilities": ["classification", "candidate-selection"],
+      "recommendationRank": 4,
+      "releases": []
+    }
+  ]
+}

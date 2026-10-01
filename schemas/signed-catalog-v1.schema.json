@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "zixcel://local-inference/signed-catalog/v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "keyId", "payloadBase64", "signatureBase64"],
+  "properties": {
+    "schema": { "const": "zixcel://local-inference/signed-catalog/v1" },
+    "keyId": { "$ref": "#/$defs/id" },
+    "payloadBase64": { "type": "string", "minLength": 1 },
+    "signatureBase64": { "type": "string", "minLength": 1 }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    }
+  }
+}
