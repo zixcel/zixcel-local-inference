@@ -2,7 +2,7 @@
 use crate::VerificationControl;
 use serde::{Deserialize, Serialize};
 use std::{path::Path, time::Duration};
-use zixcel_inference_cost::{CostEstimate, CostRateCard, TokenUsage};
+use zixcel_cost::{CostEstimate, CostRateCard, TokenUsage};
 pub const MAX_REQUEST_BYTES: usize = 65_536;
 pub const MAX_RESPONSE_BYTES: usize = 65_536;
 pub const MAX_REQUESTS: usize = 128;
@@ -99,6 +99,9 @@ fn identity<T: Serialize>(domain: &str, value: &T) -> Result<String> {
     crate::configuration::identity(domain, value).map_err(|_| InferenceError::InvalidRequest)
 }
 impl InferenceOptions {
+    /// Checks physical execution bounds and the supported usage-rate coverage.
+    /// # Errors
+    /// Invalid budgets, output limits or unsupported rates reject.
     pub fn validate(&self) -> Result<()> {
         if self.execution_budget_ms == 0 || self.execution_budget_ms > MAX_EXECUTION_BUDGET_MS {
             return Err(InferenceError::InvalidExecutionBudget);
@@ -125,6 +128,9 @@ impl InferenceOptions {
 }
 
 impl InferenceRequest {
+    /// Binds input and options to the current ready process identity.
+    /// # Errors
+    /// An unready process, invalid input/options or identity failure rejects.
     pub fn prepare(
         process: &crate::process::ProcessSnapshot,
         context_digest: String,
@@ -146,12 +152,15 @@ impl InferenceRequest {
         value.validate()?;
         Ok(value)
     }
+    #[must_use]
     pub fn request_ref(&self) -> &str {
         &self.request_ref
     }
+    #[must_use]
     pub fn context_digest(&self) -> &str {
         &self.context_digest
     }
+    #[must_use]
     pub fn reference(&self) -> RequestReference {
         RequestReference {
             request_ref: self.request_ref.clone(),
@@ -170,6 +179,9 @@ impl InferenceRequest {
             ),
         )
     }
+    /// Checks bounded input, options and the immutable physical request identity.
+    /// # Errors
+    /// Invalid fields, size limits or a mismatched request digest reject.
     pub fn validate(&self) -> Result<()> {
         self.options.validate()?;
         if !crate::process::digest(&self.runtime_ref)
@@ -193,6 +205,9 @@ impl InferenceResult {
         self.result_ref = identity("runtime/inference/physical-result/2", self)?;
         Ok(())
     }
+    /// Checks result bounds, usage coverage, cost and exact request binding.
+    /// # Errors
+    /// Invalid output/usage, arithmetic or mismatched identity reject.
     pub fn validate(&self, request: &InferenceRequest) -> Result<()> {
         request.validate()?;
         if self.output.len() > MAX_TEXT_BYTES
@@ -214,7 +229,7 @@ impl InferenceResult {
             .options
             .cost_rates
             .as_ref()
-            .map(|rates| zixcel_inference_cost::estimate(&self.usage, rates))
+            .map(|rates| zixcel_cost::estimate(&self.usage, rates))
             .transpose()
             .map_err(|_| InferenceError::CostAccountingError)?;
         let mut sealed = self.clone();
@@ -280,6 +295,8 @@ fn check_control(control: &VerificationControl) -> Result<()> {
 }
 
 /// Submit one bounded physical request. Callers must enforce their admission policy.
+/// # Errors
+/// Cancellation, deadline, invalid request and exact owner/transport errors reject.
 pub fn submit(
     root: &Path,
     request: &InferenceRequest,

@@ -19,7 +19,9 @@ fn admission_schema_operations_match_closed_owner_parsing_and_serialization() {
             continue;
         }
         let mut value = serde_json::json!({"operation": name});
-        if name=="process" {value["command"]=serde_json::json!({"operation":"inspect"});}
+        if name == "process" {
+            value["command"] = serde_json::json!({"operation":"inspect"});
+        }
         if branch["properties"].get("reference").is_some() {
             value["reference"] = serde_json::json!("a".repeat(64));
         }

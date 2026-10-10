@@ -125,13 +125,13 @@ pub(super) fn convert(request: &InferenceRequest, bytes: &[u8]) -> Result<Infere
     if text.len() > crate::inference::MAX_TEXT_BYTES {
         return Err(E::OutputLimitExceeded);
     }
-    let usage = zixcel_inference_cost::TokenUsage::new(input, 0, 0, output, 0)
-        .map_err(|_| E::CostAccountingError)?;
+    let usage =
+        zixcel_cost::TokenUsage::new(input, 0, 0, output, 0).map_err(|_| E::CostAccountingError)?;
     let cost = request
         .options
         .cost_rates
         .as_ref()
-        .map(|rates| zixcel_inference_cost::estimate(&usage, rates))
+        .map(|rates| zixcel_cost::estimate(&usage, rates))
         .transpose()
         .map_err(|_| E::CostAccountingError)?;
     Ok(InferenceResult {

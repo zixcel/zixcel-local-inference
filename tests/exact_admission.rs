@@ -496,11 +496,7 @@ fn immutable_bytes_exact_runtime_restart_replay_and_tampering() {
         .expect("model admission");
     assert_eq!(model.architecture, "test-fixture");
     let replay = registry
-        .admit_artifact(
-            &source,
-            definition,
-            zixcel_revision::RevisionRef::default(),
-        )
+        .admit_artifact(&source, definition, zixcel_revision::RevisionRef::default())
         .expect("lost response replay");
     assert_eq!(replay, (model.clone(), receipt.clone()));
     let executable = static_elf();

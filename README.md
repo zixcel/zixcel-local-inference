@@ -11,11 +11,11 @@ Prepare and verify local model artifacts before a caller starts a managed infere
 
 Current verification and demonstration paths are not proof of a production model running. Real acquisition, inference and shutdown need separate integration evidence.
 
-Package distribution is not activated by this documentation. Use the checked-in source and the declared dependency versions; published availability must be verified separately.
+The reusable artifact-lifecycle library is independently packaged for crates.io. Its CLI exercises the same library from a standalone checkout; no wonderland directory layout or private registry is required.
 
 ## Getting started
 
-Install Rust 1.97 or newer and make the declared dependencies available. Use the configured private registry when a dependency is not distributed publicly. Run from this repository:
+Install Rust 1.97 or newer and make the declared dependencies available. All declared library dependencies resolve from crates.io. Run from this repository:
 
 ```sh
 cargo test --locked
@@ -28,7 +28,7 @@ cargo test --locked
 The following uses small non-model data to demonstrate signing, dynamic candidates, resolution, installation, status comparison and deletion.
 
 ```bash
-cd $WONDERLAND_ROOT/ecosystem/providers/zixcel/services/zixcel/repositories/zixcel-local-inference
+cd zixcel-local-inference
 
 DEMO_DIR="$(mktemp -d)"
 
@@ -71,6 +71,8 @@ MODELS="$DEMO_DIR/models"
 The demo artifact is `lifecycle-demo-not-model-weights` and `inferenceReady` is `false`.
 
 ## Documentation and source
+
+[Rust engine options and streaming boundaries](docs/engine-options-and-streaming.md)
 
 [Interface reference](docs/interface-reference.md)
 
