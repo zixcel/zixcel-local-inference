@@ -59,8 +59,8 @@ dependencies = [
 [[package]]
 name = "crowsi-transport-foundation"
 version = "0.10.0"
-source = "sparse+https://ecosystem-private.invalid/cargo/index/"
-checksum = "a6042d4453b144f554aa2498b673b0630e95f5c760ceaa197839028631b4f363"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5ea9f62cba90628ba01180f6207bded60ca1563fdf145c4d1358e955053c653"
 dependencies = [
  "rustix",
 ]
@@ -219,9 +219,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "libc"
-version = "0.2.189"
+version = "0.2.190"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
 
 [[package]]
 name = "linux-raw-sys"
@@ -348,7 +348,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 3.0.6",
+ "syn 3.0.7",
 ]
 
 [[package]]
@@ -413,9 +413,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "3.0.6"
+version = "3.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8593e8e72159ed2257d083c7a454a85cbf854f37a0966d8d483aff8c8a3ebcee"
+checksum = "d62a2e0561533f2ca2561d0cf27fd9fedb640a1bf2616ff5d5c80d99017faadc"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -452,7 +452,7 @@ checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 3.0.6",
+ "syn 3.0.7",
 ]
 
 [[package]]
@@ -496,15 +496,15 @@ dependencies = [
 
 [[package]]
 name = "zeroize"
-version = "1.9.0"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e13c156562582aa81c60cb29407084cdb54c4164760106ab78e6c5b0858cf64e"
+checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
 
 [[package]]
-name = "zixcel-inference-cost"
+name = "zixcel-cost"
 version = "0.10.0"
-source = "sparse+https://zixcel-private.invalid/cargo/index/"
-checksum = "437e7900053bba470cd1e40ae20d0dfcece596eda326048076e41267c9b25981"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5b687d30f8a1ab7340f417163f9cca99be4f5a093358c399379d156ad4d9429"
 dependencies = [
  "serde",
  "serde_json",
@@ -513,7 +513,7 @@ dependencies = [
 
 [[package]]
 name = "zixcel-local-inference"
-version = "0.10.0"
+version = "0.10.1"
 dependencies = [
  "base64",
  "crowsi-transport-foundation",
@@ -524,15 +524,15 @@ dependencies = [
  "serde_json",
  "sha2",
  "tempfile",
- "zixcel-inference-cost",
+ "zixcel-cost",
  "zixcel-revision",
 ]
 
 [[package]]
 name = "zixcel-revision"
 version = "0.10.0"
-source = "sparse+https://zixcel-private.invalid/cargo/index/"
-checksum = "712845cc67b0861d14d4cfb8014c843a8ba9f2da4a4e19a2e015b182be723e84"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8990ba1cf704bf5682e567673ced4af424d2a20f83a843832b299e80df69c583"
 dependencies = [
  "redb",
  "serde",

@@ -6,15 +6,17 @@ mod catalog;
 mod configuration;
 mod distribution;
 mod dynamic_elf;
+pub mod engine_options;
 mod error;
 mod fsutil;
-mod install;
-mod management;
-#[cfg(target_os = "linux")]
-pub mod process;
+pub mod generation_stream;
 #[cfg(target_os = "linux")]
 pub mod inference;
+mod install;
+mod management;
 mod model;
+#[cfg(target_os = "linux")]
+pub mod process;
 mod runtime;
 mod verification;
 mod verification_control;

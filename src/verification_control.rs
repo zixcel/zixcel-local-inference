@@ -26,6 +26,8 @@ impl VerificationControl {
         self.cancelled.store(true, Ordering::Release);
     }
     /// Check the caller-owned observation deadline and cancellation without mutation.
+    /// # Errors
+    /// Returns `cancelled` or `timeout` when observation must stop.
     pub fn check(&self) -> Result<(), LocalInferenceError> {
         if self.cancelled.load(Ordering::Acquire) {
             return Err(LocalInferenceError::new("cancelled"));
