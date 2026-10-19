@@ -217,7 +217,16 @@ fn hash_copy(
                 .map_err(|_| err("artifact-unavailable"))?;
         }
     }
-    if bytes != definition.bytes || format!("{:x}", hash.finalize()) != definition.sha256 {
+    if bytes != definition.bytes
+        || (hash.finalize())
+            .iter()
+            .fold(String::with_capacity(64), |mut encoded, byte| {
+                use std::fmt::Write as _;
+                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                encoded
+            })
+            != definition.sha256
+    {
         return Err(err("digest-mismatch"));
     }
     Ok(())
@@ -563,7 +572,14 @@ mod tests {
             let destination = temporary.path().join("managed");
             fs::write(&source, &original).expect("authored fixture");
             let definition = ArtifactAdmission {
-                sha256: format!("{:x}", Sha256::digest(&original)),
+                sha256: (Sha256::digest(&original)).iter().fold(
+                    String::with_capacity(64),
+                    |mut encoded, byte| {
+                        use std::fmt::Write as _;
+                        write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                        encoded
+                    },
+                ),
                 bytes: original.len() as u64,
                 format: if original.starts_with(b"GGUF") {
                     ArtifactFormat::GgufV3

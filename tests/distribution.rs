@@ -55,7 +55,14 @@ fn exact_distribution_replay_read_purity_alias_safety_and_dependency_rejection()
         registry.admit_artifact(
             &source,
             ArtifactAdmission {
-                sha256: format!("{:x}", Sha256::digest(&bytes)),
+                sha256: (Sha256::digest(&bytes)).iter().fold(
+                    String::with_capacity(64),
+                    |mut encoded, byte| {
+                        use std::fmt::Write as _;
+                        write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                        encoded
+                    },
+                ),
                 bytes: bytes.len() as u64,
                 format: ArtifactFormat::DynamicElf64,
                 provenance: ArtifactProvenance {

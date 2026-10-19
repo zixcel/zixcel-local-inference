@@ -49,7 +49,14 @@ pub fn model(id: &str, approval: &str) -> ModelDescriptor {
                     url: "https://models.example.test/model.gguf".to_owned(),
                 },
                 integrity: ArtifactIntegrity {
-                    sha256: format!("{:x}", Sha256::digest(MODEL_BYTES)),
+                    sha256: (Sha256::digest(MODEL_BYTES)).iter().fold(
+                        String::with_capacity(64),
+                        |mut encoded, byte| {
+                            use std::fmt::Write as _;
+                            write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                            encoded
+                        },
+                    ),
                     bytes: u64::try_from(MODEL_BYTES.len()).expect("fixture length"),
                 },
                 approval: Approval {
