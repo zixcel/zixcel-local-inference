@@ -323,7 +323,16 @@ fn copy_and_digest(
     output
         .sync_all()
         .map_err(|_| LocalInferenceError::new("installation-io-failed"))?;
-    Ok((format!("{:x}", hasher.finalize()), total))
+    Ok((
+        (hasher.finalize())
+            .iter()
+            .fold(String::with_capacity(64), |mut encoded, byte| {
+                use std::fmt::Write as _;
+                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                encoded
+            }),
+        total,
+    ))
 }
 
 fn verify_status(
@@ -399,5 +408,14 @@ fn digest_file(path: &Path) -> Result<(String, u64), LocalInferenceError> {
             )
             .ok_or_else(|| LocalInferenceError::new("artifact-size-invalid"))?;
     }
-    Ok((format!("{:x}", hasher.finalize()), total))
+    Ok((
+        (hasher.finalize())
+            .iter()
+            .fold(String::with_capacity(64), |mut encoded, byte| {
+                use std::fmt::Write as _;
+                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                encoded
+            }),
+        total,
+    ))
 }

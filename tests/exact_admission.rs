@@ -9,7 +9,14 @@ use zixcel_local_inference::{ModelConfiguration, RuntimeConfiguration, RuntimeRe
 
 fn descriptor(bytes: &[u8], format: ArtifactFormat) -> ArtifactAdmission {
     ArtifactAdmission {
-        sha256: format!("{:x}", Sha256::digest(bytes)),
+        sha256: (Sha256::digest(bytes)).iter().fold(
+            String::with_capacity(64),
+            |mut encoded, byte| {
+                use std::fmt::Write as _;
+                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                encoded
+            },
+        ),
         bytes: bytes.len() as u64,
         format,
         provenance: ArtifactProvenance {

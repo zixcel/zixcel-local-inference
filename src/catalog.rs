@@ -384,7 +384,14 @@ impl CatalogStore {
     ) -> Result<(), LocalInferenceError> {
         let source_directory =
             prepare_directory(&self.state_root.join("catalogs").join(&source.id))?;
-        let digest = format!("{:x}", Sha256::digest(envelope));
+        let digest = (Sha256::digest(envelope)).iter().fold(
+            String::with_capacity(64),
+            |mut encoded, byte| {
+                use std::fmt::Write as _;
+                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
+                encoded
+            },
+        );
         let existing = cached_catalog_files(&source_directory)?;
         if let Some((highest, highest_digest, highest_path)) = existing.last() {
             let previous = verify_catalog(
