@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
-      CARGO_BUILD_JOBS: '2'
+      CARGO_BUILD_JOBS: '1'
+      CARGO_INCREMENTAL: '0'
+      CARGO_PROFILE_DEV_DEBUG: '0'
+      CARGO_PROFILE_TEST_DEBUG: '0'
     defaults:
       run:
         working-directory: .
@@ -31,7 +34,7 @@ jobs:
           cargo +1.97 fmt --all -- --check
           cargo +1.97 clippy --locked --all-targets --all-features -- -D warnings
       - name: Exercise behavioral and documentation tests
-        run: cargo +1.97 test --locked --all-features
+        run: cargo +1.97 test --locked --all-features -- --test-threads=1
       - name: Generate and build the independent public package
         run: cargo +1.97 package --locked --registry crates-io
       - name: Record exact source and package bytes

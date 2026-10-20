@@ -13,6 +13,19 @@ Current verification and demonstration paths are not proof of a production model
 
 The reusable artifact-lifecycle library is independently packaged for crates.io. Its CLI exercises the same library from a standalone checkout; no wonderland directory layout or private registry is required.
 
+## Complete bundles and protected backend workers
+
+The library also verifies a closed multi-file ONNX/OpenVINO bundle against an
+externally selected manifest digest. This is an integrity observation, not
+signature trust, model licensing approval, immutable placement or runtime admission.
+See [the bundle contract](docs/model-bundles.md).
+
+Linux native adapters can attach a dedicated worker using `BackendProcessContext`.
+This enforces finite resource limits and disables core collection in that worker.
+It does not start a backend or add OpenVINO to the existing runtime selector.
+The spawning owner must retain deadline and cleanup responsibility.
+See [failure and recovery tests](docs/testing.md).
+
 ## Getting started
 
 Install Rust 1.97 or newer and make the declared dependencies available. All declared library dependencies resolve from crates.io. Run from this repository:
