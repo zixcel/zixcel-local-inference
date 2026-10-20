@@ -5,7 +5,7 @@ use std::process::ExitCode;
 use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 use ed25519_dalek::{Signer, SigningKey};
-use rand_core::OsRng;
+use zeroize::Zeroizing;
 use zixcel_local_inference::{Catalog, SIGNED_CATALOG_SCHEMA, SignedCatalog};
 
 fn main() -> ExitCode {
@@ -28,7 +28,9 @@ fn execute() -> Result<(), &'static str> {
         serde_json::from_slice(&payload).map_err(|_| "catalog-payload-invalid")?;
     let output = Path::new(output);
     fs::create_dir_all(output).map_err(|_| "output-create-failed")?;
-    let signing_key = SigningKey::generate(&mut OsRng);
+    let mut seed = Zeroizing::new([0_u8; 32]);
+    getrandom::fill(seed.as_mut()).map_err(|_| "system-entropy-unavailable")?;
+    let signing_key = SigningKey::from_bytes(&seed);
     let key_id = format!("demo-{}-sequence-{}", catalog.catalog_id, catalog.sequence);
     let envelope = SignedCatalog {
         schema: SIGNED_CATALOG_SCHEMA.to_owned(),
