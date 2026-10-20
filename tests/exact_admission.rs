@@ -1,78 +1,14 @@
-use sha2::{Digest, Sha256};
 use std::fs;
+#[path = "support/pinned_child.rs"]
+mod pinned_child;
 use std::process::{Command, Stdio};
 use std::time::Duration;
-use zixcel_local_inference::{
-    ArtifactAdmission, ArtifactFormat, ArtifactProvenance, RuntimeAdmission,
-};
+use zixcel_local_inference::{ArtifactFormat, RuntimeAdmission};
 use zixcel_local_inference::{ModelConfiguration, RuntimeConfiguration, RuntimeRegistry};
 
-fn descriptor(bytes: &[u8], format: ArtifactFormat) -> ArtifactAdmission {
-    ArtifactAdmission {
-        sha256: (Sha256::digest(bytes)).iter().fold(
-            String::with_capacity(64),
-            |mut encoded, byte| {
-                use std::fmt::Write as _;
-                write!(encoded, "{byte:02x}").expect("writing to String cannot fail");
-                encoded
-            },
-        ),
-        bytes: bytes.len() as u64,
-        format,
-        provenance: ArtifactProvenance {
-            publisher: "zixcel-test-author".into(),
-            license: "MIT OR Apache-2.0".into(),
-            source: "urn:zixcel:test:format-admission".into(),
-            revision: "test-only-1".into(),
-        },
-    }
-}
-
-#[path = "support/admission_formats.rs"]
-mod admission_formats;
-use admission_formats::{gguf, static_elf};
-
-fn seed_runtime(root: &std::path::Path) -> (RuntimeRegistry, RuntimeAdmission) {
-    let registry =
-        RuntimeRegistry::provision(&root.join("registry")).expect("fixture operation succeeds");
-    let mut refs = Vec::new();
-    for (name, bytes, format) in [
-        ("model", gguf(1.0), ArtifactFormat::GgufV3),
-        ("binary", static_elf(), ArtifactFormat::StaticElf64),
-    ] {
-        let source = root.join(name);
-        fs::write(&source, &bytes).expect("fixture operation succeeds");
-        let revision = registry
-            .snapshot()
-            .expect("fixture operation succeeds")
-            .revision;
-        refs.push(
-            registry
-                .admit_artifact(&source, descriptor(&bytes, format), revision)
-                .expect("fixture operation succeeds")
-                .0
-                .artifact_ref,
-        );
-    }
-    (
-        registry,
-        RuntimeAdmission {
-            model_artifact_ref: refs[0].clone(),
-            implementation_ref: refs[1].clone(),
-            model_configuration: ModelConfiguration {
-                context_tokens: 512,
-                batch_tokens: 64,
-            },
-            runtime_configuration: RuntimeConfiguration {
-                threads: 1,
-                memory_bytes: 32 * 1024 * 1024,
-            },
-            engine: "test-format-fixture".into(),
-            engine_revision: "test-only-1".into(),
-            model_architecture: "test-fixture".into(),
-        },
-    )
-}
+#[path = "support/runtime_seed.rs"]
+mod runtime_seed;
+use runtime_seed::{descriptor, gguf, seed_runtime, static_elf};
 
 fn start_cli(root: &std::path::Path, request: &std::path::Path) -> std::process::Child {
     Command::new(env!("CARGO_BIN_EXE_zixcel-local-inference"))
@@ -104,12 +40,21 @@ fn killed_pending_process_cannot_admit_and_owner_lock_is_reusable() {
     .expect("request file");
     let lock = fs::File::open(root.join("admission.lock")).expect("existing owner lock");
     lock.lock().expect("hold publication boundary");
-    let mut child = start_cli(&root, &request);
+    let mut command = Command::new(env!("CARGO_BIN_EXE_zixcel-local-inference"));
+    command
+        .args(["registry", "--state"])
+        .arg(&root)
+        .arg("--request")
+        .arg(&request)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
+    let mut child = pinned_child::PinnedChild::spawn(command).expect("pin exact pending CLI");
+    assert!(child.stdin().is_none(), "no inherited interactive input");
+    assert!(child.running().expect("pending child exists"));
     // The child cannot pass admission while the parent holds this owner boundary.
-    child
-        .kill()
-        .expect("interrupt only this test-owned process");
-    child.wait().expect("reap interrupted process");
+    let interrupted = child.interrupt().expect("pidfd-only pending interruption");
+    assert_eq!(child.finish().expect("cached exact exit"), interrupted);
     drop(lock);
     assert_eq!(
         registry
@@ -138,86 +83,6 @@ fn killed_pending_process_cannot_admit_and_owner_lock_is_reusable() {
             .len(),
         1
     );
-}
-
-#[test]
-#[ignore = "subprocess fixture; executed by unclean_writer_requires_explicit_physical_recovery"]
-fn unclean_writer_fixture() {
-    use std::io::Read;
-    let root = std::env::var_os("ZIXCEL_TEST_CRASH_REGISTRY").expect("parent-owned fixture path");
-    let root = std::path::PathBuf::from(root);
-    let backend = zixcel_revision::RedbBackend::recover_existing(root.join("admission.redb"))
-        .expect("existing exact database");
-    fs::write(root.join("test-writer-ready"), []).expect("parent rendezvous");
-    let mut byte = [0];
-    let _ = std::io::stdin().read_exact(&mut byte);
-    drop(backend);
-}
-
-#[test]
-fn unclean_writer_requires_explicit_physical_recovery() {
-    let temporary = tempfile::tempdir().expect("isolated crash fixture");
-    let (registry, definition) = seed_runtime(temporary.path());
-    let committed = registry
-        .admit_runtime(
-            definition,
-            registry.snapshot().expect("before admission").revision,
-        )
-        .expect("durable definition");
-    let before = registry.snapshot().expect("durable baseline");
-    let root = temporary.path().join("registry");
-    let mut child = Command::new(std::env::current_exe().expect("test harness"))
-        .args(["--ignored", "--exact", "unclean_writer_fixture"])
-        .env("ZIXCEL_TEST_CRASH_REGISTRY", &root)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .expect("spawn owned writer fixture");
-    let deadline = std::time::Instant::now() + Duration::from_secs(3);
-    while !root.join("test-writer-ready").exists() && std::time::Instant::now() < deadline {
-        std::thread::sleep(Duration::from_millis(5));
-    }
-    let ready = root.join("test-writer-ready").exists();
-    child.kill().expect("interrupt exact fixture process");
-    child.wait().expect("reap fixture process");
-    assert!(
-        ready,
-        "writer reached explicit rendezvous before interruption"
-    );
-    let bytes = fs::read(root.join("admission.redb")).expect("unclean database image");
-    let error = RuntimeRegistry::open_existing(&root)
-        .expect_err("unclean physical image requires explicit recovery, never read repair");
-    // The revision owner distinguishes an interrupted physical writer from
-    // corrupt logical content. Reading either condition must not repair it.
-    assert_eq!(error.code(), "registry-recovery-required");
-    assert_eq!(
-        fs::read(root.join("admission.redb")).expect("after pure read"),
-        bytes
-    );
-    let restored = RuntimeRegistry::recover(&root).expect("explicit physical recovery");
-    assert_eq!(
-        restored.snapshot().expect("recovered snapshot").revision,
-        before.revision
-    );
-    assert_eq!(
-        restored
-            .runtime(&committed.0.runtime_ref)
-            .expect("same definition"),
-        committed.0
-    );
-    assert_eq!(
-        restored
-            .admit_runtime(
-                committed.0.definition.clone(),
-                committed.1.previous_revision.clone()
-            )
-            .expect("original receipt after recovery"),
-        committed
-    );
-    let absent = temporary.path().join("missing");
-    assert!(RuntimeRegistry::recover(&absent).is_err());
-    assert!(!absent.exists());
 }
 
 #[test]

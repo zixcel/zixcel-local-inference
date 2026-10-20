@@ -2,6 +2,8 @@
 #![doc = "Data-driven local inference catalog and verified artifact lifecycle for Zixcel."]
 
 mod admission;
+#[cfg(target_os = "linux")]
+pub mod backend_process;
 mod catalog;
 mod configuration;
 mod distribution;
@@ -15,6 +17,7 @@ pub mod inference;
 mod install;
 mod management;
 mod model;
+pub mod model_bundle;
 #[cfg(target_os = "linux")]
 pub mod process;
 mod runtime;

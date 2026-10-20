@@ -12,7 +12,7 @@ fn cli_completes_source_to_removal_with_exact_data_checks() {
     let binary = env!("CARGO_BIN_EXE_zixcel-local-inference");
     assert_eq!(
         String::from_utf8(success(binary, &["--version"]).stdout).expect("version output"),
-        "zixcel-local-inference 0.10.1\n"
+        concat!("zixcel-local-inference ", env!("CARGO_PKG_VERSION"), "\n")
     );
     let temporary = tempdir().expect("temporary directory");
     let state = temporary.path().join("state");
